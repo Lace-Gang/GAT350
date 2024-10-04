@@ -48,12 +48,19 @@ int main(int argc, char* argv[])
         {
             int x = rand() % 400;
             int y = rand() % 300;
+            int x2 = rand() % 400;
+            int y2 = rand() % 300;
             //std::cout << x << std::endl;
             //std::cout << x << std::endl;
-            framebuffer.DrawPoint(x, y, { 255, 255, 255, 255 });
+            //framebuffer.DrawPoint(x, y, { 255, 255, 255, 255 });
 
+            //framebuffer.DrawLine(x, y, x2, y2, { (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255) });
         }
-        framebuffer.DrawRect(10, 10, 50, 50, { 0, 255, 0, 255 });
+        //framebuffer.DrawRect(10, 10, 50, 50, { 0, 255, 0, 255 });
+        framebuffer.DrawLine(40, 40, 500, 500, { (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255) });
+
+        framebuffer.DrawTriangle(10, 10, 50, 20, 30, 60, { 255, 255, 255, 255 });
+        framebuffer.DrawCircle(200, 200, 30, { 255, 255, 255, 255 });
 
         framebuffer.Update();
         r.CopyFramebuffer(framebuffer);
