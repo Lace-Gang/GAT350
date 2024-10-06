@@ -12,7 +12,7 @@ public:
 	Framebuffer(const class Renderer& renderer, int width, int height);
 	~Framebuffer();
 
-	void Update();
+	void Update(const class Renderer& renderer);
 	void Clear(const color_t& color);
 
 	void DrawPoint(int x, int y, const color_t& color);
@@ -31,5 +31,6 @@ public:
 
 	SDL_Texture* m_texture{ nullptr };
 	std::vector<color_t> m_buffer;
+
 	//we have both of these for the purpose of speed
 };

@@ -20,9 +20,13 @@ Framebuffer::~Framebuffer()
 	SDL_DestroyTexture(m_texture);
 }
 
-void Framebuffer::Update()
-{
+void Framebuffer::Update(const Renderer& renderer)
+{	
+	//creating the texture because it was being destroyed somewhere
+	m_texture = SDL_CreateTexture(renderer.m_renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, m_width, m_height);
 	SDL_UpdateTexture(m_texture, NULL, m_buffer.data(), m_pitch);
+	//std::cout << SDL_UpdateTexture(m_texture, NULL, m_buffer.data(), m_pitch) << std::endl;
+	//std::cout << SDL_GetError() << std::endl;
 }
 
 void Framebuffer::Clear(const color_t& color)

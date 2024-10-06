@@ -12,7 +12,6 @@ int main(int argc, char* argv[])
     r.Initialize();
 
     r.CreateWindow(800, 600, "Game Engine");
-    
 
     // create renderer
     //SDL_Renderer* renderer = SDL_CreateRenderer(r.m_window, -1, 0);
@@ -51,7 +50,7 @@ int main(int argc, char* argv[])
             int x2 = rand() % 400;
             int y2 = rand() % 300;
             //std::cout << x << std::endl;
-            //std::cout << x << std::endl;
+            //std::cout << y << std::endl;
             //framebuffer.DrawPoint(x, y, { 255, 255, 255, 255 });
 
             //framebuffer.DrawLine(x, y, x2, y2, { (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255) });
@@ -62,12 +61,13 @@ int main(int argc, char* argv[])
         framebuffer.DrawTriangle(10, 10, 50, 20, 30, 60, { 255, 255, 255, 255 });
         framebuffer.DrawCircle(200, 200, 30, { 255, 255, 255, 255 });
 
-        framebuffer.Update();
+        framebuffer.Update(r);
         r.CopyFramebuffer(framebuffer);
 
 
         // show screen
         SDL_RenderPresent(r.m_renderer);
+        
     }
 
     return 0;
