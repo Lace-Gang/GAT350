@@ -1,5 +1,9 @@
 #include "Framebuffer.h"
 #include "Renderer.h"
+#include "MathUtils.h"
+#include "Image.h"
+
+//#include <iostream>
 
 Framebuffer::Framebuffer(const Renderer& renderer, int width, int height)
 {
@@ -201,4 +205,120 @@ void Framebuffer::DrawCirclePoints(int xc, int yc, int x, int y, const color_t& 
 	DrawPoint(xc - y, yc + x, color);
 	DrawPoint(xc + y, yc - x, color);
 	DrawPoint(xc - y, yc - x, color);
+}
+
+
+
+void Framebuffer::DrawLinearCurve(int x1, int y1, int x2, int y2, const color_t& color)
+{
+	float dt = 1 / 10.f;
+	float t1 = 0;
+	for (int i = 0; i < 10; i++)
+	{
+		int sx1 = Lerp(x1, x2, t1);
+		int sy1 = Lerp(y1, y2, t1);
+
+		float t2 = t1 + dt;
+		
+		int sx2 = Lerp(x1, x2, t2);
+		int sy2 = Lerp(y1, y2, t2);
+		t1 += dt;
+		
+		DrawLine(sx1, sy1, sx2, sy2, color);
+	}
+}
+
+void Framebuffer::DrawQuadraticCurve(int x1, int y1, int x2, int y2, int x3, int y3, const color_t& color)
+{
+	float dt = 1.0f / 100;
+	float t1 = 0;
+	for (int i = 0; i < 100; i++)
+	{
+		int sx1, sy1;
+
+		QuadraticPoint(x1, y1, x2, y2, x3, y3, t1, sx1, sy1);
+
+		float t2 = t1 + dt;
+		int sx2, sy2;
+
+
+		QuadraticPoint(x1, y1, x2, y2, x3, y3, t2, sx2, sy2);
+
+		t1 += dt;
+
+		DrawLine(sx1, sy1, sx2, sy2, color);
+	}
+}
+
+void Framebuffer::DrawCubicCurve(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, const color_t& color)
+{
+	float dt = 1.0f / 100;
+	float t1 = 0;
+
+	float one_minus_t = 1 - t1;
+
+	for (int i = 0; i < 100; i++)
+	{
+
+		int sx1, sy1;
+
+		CubicPoint(x1, y1, x2, y2, x3, y3, x4, y4, t1, sx1, sy1);
+
+		float t2 = t1 + dt;
+		int sx2, sy2;
+
+
+		CubicPoint(x1, y1, x2, y2, x3, y3, x4, y4, t2, sx2, sy2);
+
+		t1 += dt;
+
+		DrawLine(sx1, sy1, sx2, sy2, color);
+
+	}
+
+
+	//x = (int)(a1 * x1 + b1 * x2 + c1 * x3);
+	//y = (int)(a1 * y1 + b1 * y2 + c1 * y3);
+
+
+}
+
+void Framebuffer::DrawImage(int x, int y, const Image& image)
+{
+	// check if off-screen
+	//<look at DrawRect for example, use image width and height>
+	//if (y < 0 || x < 0 || y + image.m_height > m_height || x + image.m_width > m_width) return;
+	if (y + image.m_height < 0 || x + image.m_width < 0 || y > m_height || x > m_width) return;
+
+	
+	// iterate through image y
+	for (int iy = 0; iy < image.m_height; iy++)
+	{
+		// set screen y 
+		int sy = y + iy;
+		// check if off-screen, don't draw if off-screen
+		//if (<check if screen y is off - screen>) < skip rest of loop > ;
+		if (sy > m_height - 1 || sy <= 0) continue;
+
+		// iterate through image x
+		for (int ix = 0; ix < image.m_width; ix++)
+		{
+			// set screen x
+			int sx = x + ix;
+			// check if off-screen, don't draw if off-screen
+			if (sx > m_width - 1 || sx <= 0) continue;
+
+			// get image pixel color
+			//color_t color = image.m_buffer[ix, iy];
+			color_t color = image.m_buffer[ix + iy * image.m_width];
+			//color_t color = image.m_buffer[<calculate image index with image x and image y>];
+			// check alpha, if 0 don't draw
+			if (color.a == 0) continue;
+			// set buffer to color
+			//m_buffer[sx, sy] = color;
+			m_buffer[sx + sy * m_width] = color;
+			//std::cout << (int)color.r << " "<< (int)color.g << " "<<(int) color.b << " "<< (int)color.a << " " << std::endl; // <-- this is trippy
+			//if(color.a != 0 && color.b > 100) std::cout << "color added" << std::endl;
+		}
+	}
 }
