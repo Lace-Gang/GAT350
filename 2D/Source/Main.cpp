@@ -2,6 +2,7 @@
 #include "Framebuffer.h"
 #include "MathUtils.h"
 #include "Image.h"
+#include "PostProcess.h"
 
 #include <SDL.h>
 #include <iostream>
@@ -78,19 +79,38 @@ int main(int argc, char* argv[])
         //CubicPoint(100, 200, 100, 100, mx, my, 200, 200, t, x, y);
         //framebuffer.DrawRect(y-5, x-5, 10, 10, { 0, 255, 0, 255 });
 
-        for (int i = 0; i < 5; i++)
-        {
-            Image image;
-            //image.Load("diamond.png");
-            //image.Load("transparentChuuya.png");
-            image.Load("chuuya.png");
-            framebuffer.DrawImage(rand() % 700, rand() % 700, image);
+        //for (int i = 0; i < 5; i++)
+        //{
+        //    Image image;
+        //    //image.Load("diamond.png");
+        //    //image.Load("transparentChuuya.png");
+        //    image.Load("chuuya.png");
+        //    framebuffer.DrawImage(rand() % 700, rand() % 700, image);
+        //
+        //}
 
-        }
+        Image image;
+        image.Load("scenic.jpg");
+        framebuffer.DrawImage(10, 10, image);
 
+
+        //PostProcess::Invert(framebuffer.m_buffer);
+        //PostProcess::Monochrome(framebuffer.m_buffer);
+        //PostProcess::Brightness(framebuffer.m_buffer, 120);
+        //PostProcess::ColorBalance(framebuffer.m_buffer, 90, 30, 40);
+        //PostProcess::Noise(framebuffer.m_buffer, 60);
+        //PostProcess::Threshold(framebuffer.m_buffer, 60);
+        PostProcess::Posterize(framebuffer.m_buffer, 10);
+
+        //PostProcess::BoxBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::GaussianBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 150);
 
         framebuffer.Update(r);
+
         r.CopyFramebuffer(framebuffer);
+        //r = framebuffer;
 
 
             // show screen

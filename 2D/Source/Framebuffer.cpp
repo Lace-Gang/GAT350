@@ -287,8 +287,7 @@ void Framebuffer::DrawImage(int x, int y, const Image& image)
 {
 	// check if off-screen
 	//<look at DrawRect for example, use image width and height>
-	//if (y < 0 || x < 0 || y + image.m_height > m_height || x + image.m_width > m_width) return;
-	if (y + image.m_height < 0 || x + image.m_width < 0 || y > m_height || x > m_width) return;
+	if (y + image.m_height < 0 || x + image.m_width < 0 || y >= m_height || x >= m_width) return;
 
 	
 	// iterate through image y
@@ -298,7 +297,7 @@ void Framebuffer::DrawImage(int x, int y, const Image& image)
 		int sy = y + iy;
 		// check if off-screen, don't draw if off-screen
 		//if (<check if screen y is off - screen>) < skip rest of loop > ;
-		if (sy > m_height - 1 || sy <= 0) continue;
+		if (sy >= m_height || sy <= 0) continue;
 
 		// iterate through image x
 		for (int ix = 0; ix < image.m_width; ix++)
@@ -306,19 +305,15 @@ void Framebuffer::DrawImage(int x, int y, const Image& image)
 			// set screen x
 			int sx = x + ix;
 			// check if off-screen, don't draw if off-screen
-			if (sx > m_width - 1 || sx <= 0) continue;
+			if (sx >= m_width || sx <= 0) continue;
 
 			// get image pixel color
-			//color_t color = image.m_buffer[ix, iy];
-			color_t color = image.m_buffer[ix + iy * image.m_width];
+			color_t color = image.m_buffer[ix + (iy * image.m_width)];
 			//color_t color = image.m_buffer[<calculate image index with image x and image y>];
 			// check alpha, if 0 don't draw
 			if (color.a == 0) continue;
 			// set buffer to color
-			//m_buffer[sx, sy] = color;
 			m_buffer[sx + sy * m_width] = color;
-			//std::cout << (int)color.r << " "<< (int)color.g << " "<<(int) color.b << " "<< (int)color.a << " " << std::endl; // <-- this is trippy
-			//if(color.a != 0 && color.b > 100) std::cout << "color added" << std::endl;
 		}
 	}
 }

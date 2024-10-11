@@ -1,9 +1,8 @@
 #include "Image.h"
 
-#include<string>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include<iostream>
 
 
 bool Image::Load(const std::string& filename)
@@ -23,11 +22,7 @@ bool Image::Load(const std::string& filename)
 	m_buffer.resize(m_width * m_height );
 
 	// copy the image data into the buffer, !!takes in number of bytes to copy!! 
-	//std::cout << &m_width << " " << std::endl;
-	//std::cout << &m_height << " " << std::endl;
-	//std::cout << &data << " " << std::endl;
 	std::memcpy(m_buffer.data(), data, m_width * m_height * sizeof(color_t));
-	//std::memcpy(m_buffer.data(), data, m_width * m_height * sizeof data); 
 	// https://en.cppreference.com/w/cpp/string/byte/memcpy
 
 	// free the image data
