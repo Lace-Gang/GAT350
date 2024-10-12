@@ -100,12 +100,16 @@ int main(int argc, char* argv[])
         //PostProcess::ColorBalance(framebuffer.m_buffer, 90, 30, 40);
         //PostProcess::Noise(framebuffer.m_buffer, 60);
         //PostProcess::Threshold(framebuffer.m_buffer, 60);
-        PostProcess::Posterize(framebuffer.m_buffer, 10);
+        //PostProcess::Posterize(framebuffer.m_buffer, 10);
 
         //PostProcess::BoxBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
         //PostProcess::GaussianBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
         //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
         //PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 150);
+        //PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+
+        //PostProcess::Halfboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::LSD(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
 
         framebuffer.Update(r);
 
