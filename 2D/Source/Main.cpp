@@ -3,6 +3,8 @@
 #include "MathUtils.h"
 #include "Image.h"
 #include "PostProcess.h"
+#include "Test.h"
+#include "Model.h"
 
 #include <SDL.h>
 #include <iostream>
@@ -20,6 +22,10 @@ int main(int argc, char* argv[])
     //SDL_Renderer* renderer = SDL_CreateRenderer(r.m_window, -1, 0);
     
     Framebuffer framebuffer(r, 800, 600);
+    
+    vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, {-5, -5, 0 } };
+    Model model(vertices, { 0, 255, 0, 255 });
+
 
     bool quit = false;
     while (!quit)
@@ -45,7 +51,15 @@ int main(int argc, char* argv[])
 
         framebuffer.Clear(color_t{ 0, 0, 0, 255 });
 
+        int ticks = SDL_GetTicks(); 
+        float time = ticks * 0.001f;
+           
         
+        //get mouse input
+        int mx, my;
+        SDL_GetMouseState(&mx, &my);
+
+#pragma region framebuffer_test   
         for (int i = 0; i < 100; i++)
         {
             int x = rand() % 400;
@@ -64,9 +78,6 @@ int main(int argc, char* argv[])
         //framebuffer.DrawTriangle(10, 10, 50, 20, 30, 60, { 255, 255, 255, 255 });
         //framebuffer.DrawCircle(200, 200, 30, { 255, 255, 255, 255 });
 
-            //get mouse input
-        //int mx, my;
-        //SDL_GetMouseState(&mx, &my);
         //
         //framebuffer.DrawLinearCurve(100, 100, mx, my, { 255, 255, 0, 255 });
         //framebuffer.DrawQuadraticCurve(100, 200, 200, 100, mx, my, { 0, 255, 255, 255 });
@@ -79,6 +90,8 @@ int main(int argc, char* argv[])
         //CubicPoint(100, 200, 100, 100, mx, my, 200, 200, t, x, y);
         //framebuffer.DrawRect(y-5, x-5, 10, 10, { 0, 255, 0, 255 });
 
+#pragma endregion
+
         //for (int i = 0; i < 5; i++)
         //{
         //    Image image;
@@ -89,9 +102,42 @@ int main(int argc, char* argv[])
         //
         //}
 
+#pragma region images
         Image image;
         image.Load("scenic.jpg");
+        //
+        Image imageAlpha;
+        imageAlpha.Load("colors.png");
+        PostProcess::Alpha(imageAlpha.m_buffer, 168);
+        //
+        //Image imagePerson;
+        //imagePerson.Load("chuuya.png");
+        //
+        SetBlendMode(BlendMode::Normal);
         framebuffer.DrawImage(10, 10, image);
+        //framebuffer.DrawImage(100, 100, imagePerson);
+        SetBlendMode(BlendMode::Multiply);
+        framebuffer.DrawImage(mx - 300, my - 200, imageAlpha);
+#pragma endregion
+
+        
+
+
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+
+
+         glm::mat4 translate = glm::translate(modelMatrix, glm::vec3(40.0f, 40.0f, 0.0f));
+
+         glm::mat4 scale = glm::scale(modelMatrix, glm::vec3(5)); //vec3(2) is the same as vec3(2, 2, 2)
+
+         glm::mat4 rotate = glm::rotate(modelMatrix, glm::radians(time * 90), glm::vec3{0, 1, 0});
+
+         modelMatrix = translate * scale * rotate;
+
+        //model.Draw(framebuffer, modelMatrix);
+
+
+#pragma region post_process
 
 
         //PostProcess::Invert(framebuffer.m_buffer);
@@ -107,9 +153,13 @@ int main(int argc, char* argv[])
         //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
         //PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 150);
         //PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::Monochrome(framebuffer.m_buffer);
+
 
         //PostProcess::Halfboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
         //PostProcess::LSD(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+
+#pragma endregion
 
         framebuffer.Update(r);
 
