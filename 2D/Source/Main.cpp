@@ -1,18 +1,36 @@
 #include "Renderer.h"
 #include "Framebuffer.h"
-#include "MathUtils.h"
-#include "Image.h"
 #include "PostProcess.h"
-#include "Test.h"
+#include "Camera.h"
+
+#include "Image.h"
 #include "Model.h"
+#include "Transform.h"
+
+#include "Input.h"
+
+#include "ETime.h"
+#include "MathUtils.h"
+//#include "Test.h"
 
 #include <SDL.h>
 #include <iostream>
 
 int main(int argc, char* argv[])
 {
+    Time time;
+
+    Input input;
+    input.Initialize();
 
     Renderer r;
+
+    Camera camera(800, 600); //change later to r.m_width and r.m_height
+    camera.SetView(glm::vec3{ 0, 0, -50 }, glm::vec3{ 0 });
+    camera.setProjection(90.0f, 800.0f / 600, 0.1f, 200.0f);
+    Transform cameraTransform{ {0, 0, -20 } };
+
+    
 
     r.Initialize();
 
@@ -22,14 +40,28 @@ int main(int argc, char* argv[])
     //SDL_Renderer* renderer = SDL_CreateRenderer(r.m_window, -1, 0);
     
     Framebuffer framebuffer(r, 800, 600);
+    SetBlendMode(BlendMode::Normal);
+
     
     vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, {-5, -5, 0 } };
-    Model model(vertices, { 0, 255, 0, 255 });
+    Model modelT(vertices, { 0, 255, 0, 255 });
+
+    Model model;
+    model.Load("teapot.obj");
+    model.SetColor({ 0, 255, 0, 255 });
+
+    Transform transformT{ {0, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{ 2 } }; //{} and () are interchangable for calling a constructor
+    Transform transform{ {0, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{ 1 } }; //{} and () are interchangable for calling a constructor
+
 
 
     bool quit = false;
-    while (!quit)
+    while (!quit) //main loop
     {
+        //UPDATE
+        time.Tick();
+        input.Update();
+
         //exit program
         SDL_Event event;
         while (SDL_PollEvent(&event))
@@ -45,14 +77,16 @@ int main(int argc, char* argv[])
         }
 
 
+        //RENDER
+
         // clear screen
         //SDL_SetRenderDrawColor(r.m_renderer, 0, 0, 0, 0);
         //SDL_RenderClear(r.m_renderer);
 
         framebuffer.Clear(color_t{ 0, 0, 0, 255 });
 
-        int ticks = SDL_GetTicks(); 
-        float time = ticks * 0.001f;
+       // int ticks = SDL_GetTicks(); 
+       // float time = ticks * 0.001f;
            
         
         //get mouse input
@@ -103,38 +137,54 @@ int main(int argc, char* argv[])
         //}
 
 #pragma region images
-        Image image;
-        image.Load("scenic.jpg");
+        //Image image;
+        //image.Load("scenic.jpg");
         //
-        Image imageAlpha;
-        imageAlpha.Load("colors.png");
-        PostProcess::Alpha(imageAlpha.m_buffer, 168);
+        //Image imageAlpha;
+        //imageAlpha.Load("colors.png");
+        //PostProcess::Alpha(imageAlpha.m_buffer, 168);
         //
         //Image imagePerson;
         //imagePerson.Load("chuuya.png");
         //
-        SetBlendMode(BlendMode::Normal);
-        framebuffer.DrawImage(10, 10, image);
+        //SetBlendMode(BlendMode::Normal);
+        //framebuffer.DrawImage(10, 10, image);
         //framebuffer.DrawImage(100, 100, imagePerson);
-        SetBlendMode(BlendMode::Multiply);
-        framebuffer.DrawImage(mx - 300, my - 200, imageAlpha);
+        //SetBlendMode(BlendMode::Multiply);
+        //framebuffer.DrawImage(mx - 300, my - 200, imageAlpha);
 #pragma endregion
 
         
 
 
-        glm::mat4 modelMatrix = glm::mat4(1.0f);
+        //glm::mat4 modelMatrix = glm::mat4(1.0f);
+        //glm::mat4 translate = glm::translate(modelMatrix, glm::vec3(40.0f, 40.0f, 0.0f));
+        //glm::mat4 scale = glm::scale(modelMatrix, glm::vec3(5)); //vec3(2) is the same as vec3(2, 2, 2)
+        //glm::mat4 rotate = glm::rotate(modelMatrix, glm::radians(time * 90), glm::vec3{1, 1, 1});
+        //modelMatrix = translate * scale * rotate;
+        //modelMatrix was the transform
+
+        glm::vec3 direction{ 0 };
+        if (input.GetKeyDown(SDL_SCANCODE_RIGHT)) direction.x = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_LEFT)) direction.x = -1;
+        if (input.GetKeyDown(SDL_SCANCODE_UP)) direction.y = -1;
+        if (input.GetKeyDown(SDL_SCANCODE_DOWN)) direction.y = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1;
 
 
-         glm::mat4 translate = glm::translate(modelMatrix, glm::vec3(40.0f, 40.0f, 0.0f));
+        cameraTransform.position += direction * 70.0f * time.GetDeltaTime();
+        camera.SetView(cameraTransform.position, cameraTransform.position + glm::vec3{ 0, 0, 1 });
 
-         glm::mat4 scale = glm::scale(modelMatrix, glm::vec3(5)); //vec3(2) is the same as vec3(2, 2, 2)
 
-         glm::mat4 rotate = glm::rotate(modelMatrix, glm::radians(time * 90), glm::vec3{0, 1, 0});
+        //transform.rotation.z += 90 * time.GetDeltaTime();
+        //modelT.Draw(framebuffer, transformT.GetMatrix(), camera);
 
-         modelMatrix = translate * scale * rotate;
 
-        //model.Draw(framebuffer, modelMatrix);
+
+        
+
+        model.Draw(framebuffer, transform.GetMatrix(), camera);
 
 
 #pragma region post_process
@@ -160,6 +210,8 @@ int main(int argc, char* argv[])
         //PostProcess::LSD(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
 
 #pragma endregion
+
+        //DISPLAY
 
         framebuffer.Update(r);
 
