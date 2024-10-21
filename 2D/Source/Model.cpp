@@ -98,7 +98,7 @@ bool Model::Load(const std::string& filename)
 					}
 
 					// check if index 0 (position) is valid
-					if (index[0] != 0)
+					if (index[0] != 0) //this mihgt also need to be "if index[0]"
 					{
 						// get vertex at index position
 						// index is 1 based, need to subtract one for array

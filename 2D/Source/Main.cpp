@@ -5,16 +5,19 @@
 
 #include "Image.h"
 #include "Model.h"
+#include "Actor.h"
 #include "Transform.h"
 
 #include "Input.h"
 
 #include "ETime.h"
 #include "MathUtils.h"
+#include "Random.h"
 //#include "Test.h"
 
 #include <SDL.h>
 #include <iostream>
+#include <memory>
 
 int main(int argc, char* argv[])
 {
@@ -46,12 +49,28 @@ int main(int argc, char* argv[])
     vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, {-5, -5, 0 } };
     Model modelT(vertices, { 0, 255, 0, 255 });
 
-    Model model;
-    model.Load("teapot.obj");
-    model.SetColor({ 0, 255, 0, 255 });
+    std::shared_ptr<Model> model = std::make_shared<Model>();
+    model->Load("teapot.obj");
+    model->SetColor({ 0, 255, 0, 255 });
+
+    //model->SetColor({ 0, 255, 50, 255 });
 
     Transform transformT{ {0, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{ 2 } }; //{} and () are interchangable for calling a constructor
-    Transform transform{ {0, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{ 1 } }; //{} and () are interchangable for calling a constructor
+    
+    std::vector<std::unique_ptr<Actor>> actors;
+
+    for (int i = 0; i < 4; i++)
+    {
+
+        Transform transform{ {randomf(-10.0f, 10.0f), random(-10.0f, 10.0f), random(-10.0f, 10.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
+    
+        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, model);
+        actor->SetColor({ 100, 150, 255, 255 });
+        actors.push_back(std::move(actor));
+
+    }
+
+
 
 
 
@@ -172,9 +191,14 @@ int main(int argc, char* argv[])
         if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = 1;
         if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1;
 
+        cameraTransform.rotation.y = input.GetMousePositionDelta().x * 0.5f;
+        //cameraTransform.rotation.x = input.GetMousePositionDelta().y * 0.5f;
 
-        cameraTransform.position += direction * 70.0f * time.GetDeltaTime();
-        camera.SetView(cameraTransform.position, cameraTransform.position + glm::vec3{ 0, 0, 1 });
+        glm::vec3 offset = cameraTransform.GetMatrix()* glm::vec4{ direction, 0 };
+
+
+        cameraTransform.position += offset * 70.0f * time.GetDeltaTime();
+        camera.SetView(cameraTransform.position, cameraTransform.position + cameraTransform.GetForward());
 
 
         //transform.rotation.z += 90 * time.GetDeltaTime();
@@ -184,7 +208,13 @@ int main(int argc, char* argv[])
 
         
 
-        model.Draw(framebuffer, transform.GetMatrix(), camera);
+        //model->Draw(framebuffer, transform.GetMatrix(), camera);
+        for (auto& actor : actors)
+        {
+            actor->Draw(framebuffer, camera);
+
+        }
+
 
 
 #pragma region post_process
