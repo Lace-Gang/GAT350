@@ -25,7 +25,6 @@ int main(int argc, char* argv[])
 
     Input input;
     input.Initialize();
-    input.Update();
 
     Renderer r;
 
@@ -63,10 +62,10 @@ int main(int argc, char* argv[])
     for (int i = 0; i < 4; i++)
     {
 
-        Transform transform{ {randomf(-10.0f, 10.0f), randomf(-10.0f, 10.0f), randomf(-10.0f, 10.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
+        Transform transform{ {randomf(-10.0f, 10.0f), random(-10.0f, 10.0f), random(-10.0f, 10.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
     
         std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, model);
-        actor->SetColor({ 100, 150, 255, 255 });
+        actor->SetColor({ 0, 150, 255, 255 });
         actors.push_back(std::move(actor));
 
     }
@@ -184,30 +183,21 @@ int main(int argc, char* argv[])
         //modelMatrix = translate * scale * rotate;
         //modelMatrix was the transform
 
-        if (input.GetMouseButtonDown(2))
-        {
-            input.SetRelativeMode(true);
+        glm::vec3 direction{ 0 };
+        if (input.GetKeyDown(SDL_SCANCODE_RIGHT)) direction.x = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_LEFT)) direction.x = -1;
+        if (input.GetKeyDown(SDL_SCANCODE_UP)) direction.y = -1;
+        if (input.GetKeyDown(SDL_SCANCODE_DOWN)) direction.y = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1;
 
-            glm::vec3 direction{ 0 };
-            if (input.GetKeyDown(SDL_SCANCODE_RIGHT)) direction.x = 1;
-            if (input.GetKeyDown(SDL_SCANCODE_LEFT)) direction.x = -1;
-            if (input.GetKeyDown(SDL_SCANCODE_UP)) direction.y = 1;
-            if (input.GetKeyDown(SDL_SCANCODE_DOWN)) direction.y = 1;
-            if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = 1;
-            if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1;
+        cameraTransform.rotation.y = input.GetMousePositionDelta().x * 0.5f;
+        //cameraTransform.rotation.x = input.GetMousePositionDelta().y * 0.5f;
 
-            cameraTransform.rotation.y += input.GetMouseRelative().x * 0.25f;
-            cameraTransform.rotation.x += input.GetMouseRelative().y * 0.25f;
+        glm::vec3 offset = cameraTransform.GetMatrix()* glm::vec4{ direction, 0 };
 
-            glm::vec3 offset = cameraTransform.GetMatrix() * glm::vec4{ direction, 0 };
 
-            cameraTransform.position += offset * 70.0f * time.GetDeltaTime();
-        }
-        else 
-        {
-            input.SetRelativeMode(false);
-        }
-                
+        cameraTransform.position += offset * 70.0f * time.GetDeltaTime();
         camera.SetView(cameraTransform.position, cameraTransform.position + cameraTransform.GetForward());
 
 

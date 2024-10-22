@@ -1,6 +1,7 @@
 #pragma once
-#define GLM_FORCE_LEFT_HAND
+
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
+//#define GLM_FORCE_LEFT_HAND
 #include <glm/glm.hpp>
 
 class Camera
@@ -12,7 +13,7 @@ public:
 	void setProjection(float fov, float aspectRatio, float near, float far);
 
 	glm::vec3 modelToView(const glm::vec3& position) const;
-	glm::vec4 ViewToProjection(const glm::vec3& position) const;
+	glm::vec3 ViewToProjection(const glm::vec3& position) const;
 
 	glm::ivec2 ToScreen(const glm::vec3& position)const;
 
@@ -20,8 +21,6 @@ public:
 	//methods with the definition in here are automatically "inline"
 	const glm::mat4& getView() { return m_view; }
 	const glm::mat4& getProjection() { return m_projection; }
-
-	glm::ivec2 ViewToScreen(const glm::vec3& position) const;
 	
 private:
 	glm::mat4 m_view{ 1 };
