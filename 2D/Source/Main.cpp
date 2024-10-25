@@ -47,12 +47,18 @@ int main(int argc, char* argv[])
     SetBlendMode(BlendMode::Normal);
 
     
-    vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, {-5, -5, 0 } };
-    Model modelT(vertices, { 0, 255, 0, 255 });
+    //vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, {-5, -5, 0 } };
+    //Model modelT(vertices, { 0, 255, 0, 255 });
 
-    std::shared_ptr<Model> model = std::make_shared<Model>();
-    model->Load("teapot.obj");
-    model->SetColor({ 0, 255, 0, 255 });
+    std::shared_ptr<Model> modelT = std::make_shared<Model>();
+    std::shared_ptr<Model> modelS = std::make_shared<Model>();
+    std::shared_ptr<Model> modelC = std::make_shared<Model>();
+    std::shared_ptr<Model> modelTea = std::make_shared<Model>();
+    modelT->Load("torus.obj");
+    modelS->Load("sphere.obj");
+    modelC->Load("cube-2.obj");
+    modelTea->Load("teapot.obj");
+    modelT->SetColor({ 0, 255, 0, 255 });
 
     //model->SetColor({ 0, 255, 50, 255 });
 
@@ -60,13 +66,50 @@ int main(int argc, char* argv[])
     
     std::vector<std::unique_ptr<Actor>> actors;
 
-    for (int i = 0; i < 4; i++)
+    //models for torus
+    for (int i = 0; i < 10; i++)
     {
 
-        Transform transform{ {randomf(-10.0f, 10.0f), randomf(-10.0f, 10.0f), randomf(-10.0f, 10.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
+        Transform transform{ {randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
     
-        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, model);
-        actor->SetColor({ 100, 150, 255, 255 });
+        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelT);
+        actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255});
+        actors.push_back(std::move(actor));
+
+    }
+
+    //models for sphere
+    for (int i = 0; i < 10; i++)
+    {
+
+        Transform transform{ {randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
+    
+        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelS);
+        actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
+        actors.push_back(std::move(actor));
+
+    }
+
+    //models for cube
+    for (int i = 0; i < 10; i++)
+    {
+
+        Transform transform{ {randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
+    
+        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelC);
+        actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
+        actors.push_back(std::move(actor));
+
+    }
+
+    //models for teapot
+    for (int i = 0; i < 10; i++)
+    {
+
+        Transform transform{ {randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
+    
+        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelTea);
+        actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
         actors.push_back(std::move(actor));
 
     }
@@ -157,8 +200,8 @@ int main(int argc, char* argv[])
         //}
 
 #pragma region images
-        //Image image;
-        //image.Load("scenic.jpg");
+        Image image;
+        image.Load("scenic.jpg");
         //
         //Image imageAlpha;
         //imageAlpha.Load("colors.png");
@@ -167,8 +210,10 @@ int main(int argc, char* argv[])
         //Image imagePerson;
         //imagePerson.Load("chuuya.png");
         //
-        //SetBlendMode(BlendMode::Normal);
-        //framebuffer.DrawImage(10, 10, image);
+        SetBlendMode(BlendMode::Normal);
+        framebuffer.DrawImage(0, 200, image);
+        framebuffer.DrawImage(0, 100, image);
+        framebuffer.DrawImage(0, 0, image);
         //framebuffer.DrawImage(100, 100, imagePerson);
         //SetBlendMode(BlendMode::Multiply);
         //framebuffer.DrawImage(mx - 300, my - 200, imageAlpha);
@@ -191,7 +236,7 @@ int main(int argc, char* argv[])
             glm::vec3 direction{ 0 };
             if (input.GetKeyDown(SDL_SCANCODE_RIGHT)) direction.x = 1;
             if (input.GetKeyDown(SDL_SCANCODE_LEFT)) direction.x = -1;
-            if (input.GetKeyDown(SDL_SCANCODE_UP)) direction.y = 1;
+            if (input.GetKeyDown(SDL_SCANCODE_UP)) direction.y = -1;
             if (input.GetKeyDown(SDL_SCANCODE_DOWN)) direction.y = 1;
             if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = 1;
             if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1;
