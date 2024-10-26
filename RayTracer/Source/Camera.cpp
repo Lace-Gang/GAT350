@@ -1,38 +1,44 @@
 #include "Camera.h"
+
 #include<glm/gtc/matrix_transform.hpp>
+#include "MathUtils.h"
 
 void Camera::SetView(const glm::vec3& eye, const glm::vec3& target, const glm::vec3& up)
 {
-	m_view = glm::lookAt(eye, target, up);
+	m_eye = eye;
+
+	//creates camera axis
+	m_forward = glm::normalize(target - eye);
+	m_right = glm::normalize(Cross(up, m_forward));
+	m_up = Cross(m_forward, m_right);
+
+	CalculateViewPlain();
 }
 
-void Camera::setProjection(float fov, float aspectRatio, float near, float far)
+ray_t Camera::GetRay(const glm::vec2& point) const
 {
-	//we will be using perspective projection as opposed to orthographic projection
-	m_projection = glm::perspective(glm::radians(fov), aspectRatio, near, far);
+	ray_t ray;
+
+	ray.origin = m_eye;
+	ray.direction = (m_lowerLeft + (m_horizontal * point.x) + (m_vertical * point.y)) - m_eye; //head - tail = direction vector
+
+	return ray;
 }
 
-glm::vec3 Camera::modelToView(const glm::vec3& position) const
+void Camera::CalculateViewPlain()
 {
-	//convert point from world space to view space
-	return m_view * glm::vec4{ position, 1 };
-}
+	float theta = glm::radians(m_fov);
 
-glm::vec3 Camera::ViewToProjection(const glm::vec3& position) const
-{
-	//convert point from view space to projection space
-	return m_projection * glm::vec4{ position, 1 };
-}
+	//tan = o / a
 
-glm::ivec2 Camera::ToScreen(const glm::vec3& position) const
-{
-	glm::vec4 clip = m_projection * glm::vec4{ position, 1 };
-	glm::vec3 ndc = clip / clip.w;
+	float halfHeight = glm::tan(theta * 0.5f);
+	float height = halfHeight * 2;
+	float width = height * m_aspectRatio;
 
-	float x = (ndc.x + 1) * (m_width * 0.5f); //ndc needs to go from -1 to 1 --> 0 to 2
-	float y = (1 - ndc.y) * (m_height * 0.5f); 
+	m_horizontal = m_right * width;
+	m_vertical = m_up * height;
 
-	return glm::ivec2(x, y);
+	m_lowerLeft = m_eye - (m_horizontal * 0.5f) - (m_vertical * 0.5f) + m_forward;
 }
 
 

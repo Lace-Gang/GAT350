@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Source\Actor.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Color.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ETime.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Framebuffer.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Image.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Input.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Main.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Model.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PostProcess.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderer.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Test.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tracer.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Sphere.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Plane.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Actor.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Camera.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Color.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ETime.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Framebuffer.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Image.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Input.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MathUtils.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PostProcess.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Random.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ray.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Renderer.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Test.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Transform.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Tracer.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Material.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Sphere.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Plane.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="headers">
+      <UniqueIdentifier>{abfae973-7830-461b-b85f-046589371851}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp">
+      <UniqueIdentifier>{cf866da0-3522-41b7-871a-8d06c862936a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
