@@ -1,15 +1,40 @@
 #pragma once
 
 #include "Color.h"
+#include "Ray.h"
 
 
 class Material
 {
 public:
 	Material() = default;
-	Material(const color3_t& color) : m_color{ color } {}
+	Material(const color3_t& albedo) : m_albedo { albedo } {}
 
-	color3_t& GetColor() { return m_color; }
-private:
-	color3_t m_color;
+	virtual bool Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& attenuation, ray_t& scatter) const = 0;
+
+	color3_t& GetColor() { return m_albedo; }
+protected:
+	color3_t m_albedo;
+};
+
+
+class Lambertian : public Material
+{
+public:
+	Lambertian(const color3_t& albedo) : Material{ albedo } {}
+
+	virtual bool Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& attenuation, ray_t& scatter) const override;
+
+};
+
+
+class Metal : public Material
+{
+public:
+	Metal(const glm::vec3& albedo, float fuzz = 0.0f) : Material{ albedo }, m_fuzz{ fuzz } {}
+
+	virtual bool Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& attenuation, ray_t& scattered) const override;
+
+protected:
+	float m_fuzz = 0;
 };
