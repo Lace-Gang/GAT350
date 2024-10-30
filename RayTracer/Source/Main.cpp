@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 
         Camera camera{ 70.0f, framebuffer.m_width / (float)framebuffer.m_height };
 
-        camera.SetView({ 0,0,20 }, { 0, 0, 0 });
+        camera.SetView({ 0,0,30 }, { 0, 0, 0 });
 
         Scene scene;
 
@@ -96,6 +96,18 @@ int main(int argc, char* argv[])
         std::shared_ptr<Material> redM = std::make_shared<Metal>(color3_t{ 1, 0, 0 }, 0.0f);
         std::shared_ptr<Material> blueM = std::make_shared<Metal>(color3_t{ 0, 0.5, 1 }, 0.3f);
         std::shared_ptr<Material> greenM = std::make_shared<Metal>(color3_t{ 0, 1, 0.5 }, 0.1f);
+        std::shared_ptr<Material> lightM = std::make_shared<Metal>(color3_t{ 0.3, 0.3, 0.3 }, 0.1f);
+        
+        std::shared_ptr<Material> bloodRedE = std::make_shared<Emissive>(color3_t{ 0.7, 0, 10.05 }, 1.2f);
+        std::shared_ptr<Material> redE = std::make_shared<Emissive>(color3_t{ 1, 0, 0 }, 11.0f);
+        std::shared_ptr<Material> blueE = std::make_shared<Emissive>(color3_t{ 0, 0.5, 1 }, 13.3f);
+        std::shared_ptr<Material> greenE = std::make_shared<Emissive>(color3_t{ 0, 1, 0.5 }, 13.1f);
+        
+        
+        std::shared_ptr<Material> bloodRedD = std::make_shared<Dielectric>(color3_t{ 0.7, 0, 0.05 }, 1.2f);
+        std::shared_ptr<Material> redD = std::make_shared<Dielectric>(color3_t{ 1, 0, 0 }, 1.3f);
+        std::shared_ptr<Material> blueD = std::make_shared<Dielectric>(color3_t{ 0, 0.5, 1 }, 1.3f);
+        std::shared_ptr<Material> greenD = std::make_shared<Dielectric>(color3_t{ 0, 1, 0.5 }, 1.1f);
 
         std::vector<std::shared_ptr<Material>> materials;
 
@@ -104,10 +116,23 @@ int main(int argc, char* argv[])
         materials.push_back(red);
         materials.push_back(blue);
         materials.push_back(green);
+
         materials.push_back(bloodRedM);
         materials.push_back(redM);
         materials.push_back(blueM);
         materials.push_back(greenM);
+        materials.push_back(lightM);
+
+        materials.push_back(bloodRedE);
+        materials.push_back(redE);
+        materials.push_back(blueE);
+        materials.push_back(greenE);
+        
+        
+        materials.push_back(bloodRedD);
+        materials.push_back(redD);
+        materials.push_back(blueD);
+        materials.push_back(greenD);
 
 
         for (int i = 0; i <= 15; i++)
@@ -115,18 +140,34 @@ int main(int argc, char* argv[])
             int matNumber = random(0, materials.size());
 
 
-            auto object = std::make_unique<Sphere>(random(glm::vec3{ -15 }, glm::vec3{ 15 }), randomf(1, 5), materials[matNumber]);
+            auto object = std::make_unique<Sphere>(randomf(glm::vec3{ -15 }, glm::vec3{ 15 }), randomf(1, 5), materials[matNumber]);
+            //auto object = std::make_unique<Sphere>(random(glm::vec3{ -15 }, glm::vec3{ 15 }), randomf(1, 5), blue);
             scene.AddObject(std::move(object));
 
         }
 
-        std::shared_ptr<Material> material = std::make_shared<Lambertian>(color3_t{ 1, 0, 1 });
-        std::unique_ptr<Sphere> object = std::make_unique<Sphere>(glm::vec3{ 0, 0, 40 }, 2.0f, material);
+        //std::shared_ptr<Material> material = std::make_shared<Lambertian>(color3_t{ 1, 0, 1 });
+        //std::unique_ptr<Sphere> object = std::make_unique<Sphere>(glm::vec3{ 0, 0, 40 }, 2.0f, material);
         //scene.AddObject(std::move(object));
 
         std::shared_ptr<Material> material2 = std::make_shared<Lambertian>(color3_t{ 0, 1, 1 });
-        auto plane = std::make_unique<Plane>(glm::vec3{ 0, -300, 0 }, glm::vec3{ 0, 1, 0 }, gray);
+        auto plane = std::make_unique<Plane>(glm::vec3{ 0, -30, 0 }, glm::vec3{ 0, 1, 0 }, gray);
         scene.AddObject(std::move(plane));
+
+
+
+
+
+        framebuffer.Clear(color_t{ 0, 200, 200, 255 });
+
+        //scene.Render(framebuffer, camera);
+        scene.Render(framebuffer, camera, 20, 5);
+
+
+
+
+
+
 
     bool quit = false;
     while (!quit) //main loop
@@ -153,9 +194,7 @@ int main(int argc, char* argv[])
 
 
         //RENDER
-        framebuffer.Clear(color_t{ 0, 200, 200, 255 });
-
-        scene.Render(framebuffer, camera);
+        
 
 
         framebuffer.Update(r);

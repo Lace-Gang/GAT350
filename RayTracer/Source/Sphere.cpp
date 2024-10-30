@@ -31,7 +31,7 @@ bool Sphere::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, 
         {
             raycastHit.distance = t;
             raycastHit.point = ray * t;
-            raycastHit.normal = glm::normalize(raycastHit.point - m_center);
+            raycastHit.normal = glm::normalize(raycastHit.point - m_center); 
 
             raycastHit.material = GetMaterial();
 

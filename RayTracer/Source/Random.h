@@ -14,15 +14,15 @@ inline float randomf() { return rand() / (float)RAND_MAX; } // 0-1
 inline float randomf(float max) { return max * randomf(); }
 inline float randomf(float min, float max) { return min + randomf(max - min); }
 
-inline glm::vec3 random(const glm::vec3& v1, const glm::vec3& v2)
+inline glm::vec3 randomf(const glm::vec3& v1, const glm::vec3& v2)
 {
     return glm::vec3{
         //<random value between v1.x and v2.x>,
         //<random value between v1.y and v2.y>,
         //<random value between v1.z and v2.z>
-        random(v1.x, v2.x),
-        random(v1.y, v2.y),
-        random(v1.z, v2.z)
+        randomf(v1.x, v2.x),
+        randomf(v1.y, v2.y),
+        randomf(v1.z, v2.z)
     };
 }
 
@@ -41,8 +41,8 @@ inline glm::vec3 randomInUnitSphere()
 
     do
     {
-        v = random(glm::vec3{ -1 }, glm::vec3{ 1 });
-    } while (glm::length(v) > 1);
+        v = randomf(glm::vec3{ -1 }, glm::vec3{ 1 });
+    } while (glm::length2(v) > 1);
 
     return v;
 }

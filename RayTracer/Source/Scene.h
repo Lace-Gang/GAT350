@@ -13,7 +13,7 @@ class Scene
 public:
 	Scene() = default;
 
-	void Render(Framebuffer& framebuffer, const Camera& camera);
+	void Render(Framebuffer& framebuffer, const Camera& camera, int numSamples = 10, int depth = 5);
 
 	void AddObject(std::unique_ptr<SceneObject> object) { m_objects.push_back(std::move(object)); }
 
