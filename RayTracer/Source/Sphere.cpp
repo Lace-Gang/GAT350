@@ -55,3 +55,10 @@ bool Sphere::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, 
     return false;
     return discriminant >= 0;
 }
+
+
+
+//bool Load(const std::string& filename)
+//{
+//    return false;
+//}

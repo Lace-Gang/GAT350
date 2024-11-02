@@ -19,6 +19,7 @@
 //#include "Test.h"
 
 #include "Plane.h"
+#include "Triangle.h"
 
 #include <SDL.h>
 #include <iostream>
@@ -51,12 +52,8 @@ int main(int argc, char* argv[])
     SetBlendMode(BlendMode::Normal);
 
     
-    vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, {-5, -5, 0 } };
-    Model modelT(vertices, { 0, 255, 0, 255 });
+    
 
-    std::shared_ptr<Model> model = std::make_shared<Model>();
-    model->Load("teapot.obj");
-    model->SetColor({ 0, 255, 0, 255 });
 
     //model->SetColor({ 0, 255, 50, 255 });
 
@@ -64,22 +61,14 @@ int main(int argc, char* argv[])
     
     std::vector<std::unique_ptr<Actor>> actors;
 
-    for (int i = 0; i < 4; i++)
-    {
-
-        Transform transform{ {randomf(-10.0f, 10.0f), random(-10.0f, 10.0f), random(-10.0f, 10.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
     
-        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, model);
-        actor->SetColor({ 0, 150, 255, 255 });
-        actors.push_back(std::move(actor));
-
-    }
 
         Framebuffer framebuffer(r, 800, 600);
 
         Camera camera{ 70.0f, framebuffer.m_width / (float)framebuffer.m_height };
 
-        camera.SetView({ 0,0,30 }, { 0, 0, 0 });
+        camera.SetView({ 5,5,5 }, { 0, 0, 0 });
+        //camera.SetView({ 0,0,-30 }, { 0, 0, 0 });
 
         Scene scene;
 
@@ -90,61 +79,93 @@ int main(int argc, char* argv[])
         std::shared_ptr<Material> red = std::make_shared<Lambertian>(color3_t{ 1, 0, 0 });
         std::shared_ptr<Material> blue = std::make_shared<Lambertian>(color3_t{ 0, 0.5, 1 });
         std::shared_ptr<Material> green = std::make_shared<Lambertian>(color3_t{ 0, 1, 0.5 });
+        std::shared_ptr<Material> orange = std::make_shared<Lambertian>(color3_t{ 1, 0.3, 0 }); 
+        std::shared_ptr<Material> yellow = std::make_shared<Lambertian>(color3_t{ 1, 0.6, 0 }); 
+
         
         std::shared_ptr<Material> grayM = std::make_shared<Metal>(color3_t{ 0.5f }, 0.0f);
         std::shared_ptr<Material> bloodRedM = std::make_shared<Metal>(color3_t{ 0.7, 0, 0.05 }, 0.2f);
         std::shared_ptr<Material> redM = std::make_shared<Metal>(color3_t{ 1, 0, 0 }, 0.0f);
-        std::shared_ptr<Material> blueM = std::make_shared<Metal>(color3_t{ 0, 0.5, 1 }, 0.3f);
-        std::shared_ptr<Material> greenM = std::make_shared<Metal>(color3_t{ 0, 1, 0.5 }, 0.1f);
+        std::shared_ptr<Material> blueM = std::make_shared<Metal>(color3_t{ 0, 0.65, 1 }, 0.3f);
+        std::shared_ptr<Material> greenM = std::make_shared<Metal>(color3_t{ 0, 1, 0.65 }, 0.1f);
         std::shared_ptr<Material> lightM = std::make_shared<Metal>(color3_t{ 0.3, 0.3, 0.3 }, 0.1f);
         
         std::shared_ptr<Material> bloodRedE = std::make_shared<Emissive>(color3_t{ 0.7, 0, 10.05 }, 1.2f);
         std::shared_ptr<Material> redE = std::make_shared<Emissive>(color3_t{ 1, 0, 0 }, 11.0f);
-        std::shared_ptr<Material> blueE = std::make_shared<Emissive>(color3_t{ 0, 0.5, 1 }, 13.3f);
+        std::shared_ptr<Material> blueE = std::make_shared<Emissive>(color3_t{ 0.2, 0.5, 1 }, 13.3f);
         std::shared_ptr<Material> greenE = std::make_shared<Emissive>(color3_t{ 0, 1, 0.5 }, 13.1f);
+        std::shared_ptr<Material> yellowE = std::make_shared<Emissive>(color3_t{ 1, 0.5, 0 }, 13.1f);
+        std::shared_ptr<Material> orangeE = std::make_shared<Emissive>(color3_t{ 1, 0.1, 0 }, 13.1f); //green as 0.2?
+        //std::shared_ptr<Material> lightE = std::make_shared<Emissive>(color3_t{ 0.8, 0.8, 0.8 }, 0.1f);
+        std::shared_ptr<Material> lightE = std::make_shared<Emissive>(color3_t{ 1, 1, 1 }, 13.1f);
+
         
         
         std::shared_ptr<Material> bloodRedD = std::make_shared<Dielectric>(color3_t{ 0.7, 0, 0.05 }, 1.2f);
-        std::shared_ptr<Material> redD = std::make_shared<Dielectric>(color3_t{ 1, 0, 0 }, 1.3f);
-        std::shared_ptr<Material> blueD = std::make_shared<Dielectric>(color3_t{ 0, 0.5, 1 }, 1.3f);
-        std::shared_ptr<Material> greenD = std::make_shared<Dielectric>(color3_t{ 0, 1, 0.5 }, 1.1f);
+        std::shared_ptr<Material> redD = std::make_shared<Dielectric>(color3_t{ 0.8, 0.1, 0.1 }, 1.3f);
+        std::shared_ptr<Material> blueD = std::make_shared<Dielectric>(color3_t{ 0, 0.3, 0.8 }, 1.3f);
+        std::shared_ptr<Material> greenD = std::make_shared<Dielectric>(color3_t{ 0, 0.8, 0.3 }, 1.1f);
+        std::shared_ptr<Material> lightD = std::make_shared<Dielectric>(color3_t{ 0.5, 0.5, 0.5 }, 1.8f);
+
 
         std::vector<std::shared_ptr<Material>> materials;
 
         //materials.push_back(gray);
         materials.push_back(bloodRed);
-        materials.push_back(red);
+        //materials.push_back(red);
         materials.push_back(blue);
         materials.push_back(green);
+        materials.push_back(orange);
+        materials.push_back(yellow);
 
         materials.push_back(bloodRedM);
-        materials.push_back(redM);
+        //materials.push_back(redM);
         materials.push_back(blueM);
         materials.push_back(greenM);
         materials.push_back(lightM);
-
+        
         materials.push_back(bloodRedE);
-        materials.push_back(redE);
+        //materials.push_back(redE);
         materials.push_back(blueE);
         materials.push_back(greenE);
+        //materials.push_back(yellowE);
+        materials.push_back(orangeE);
+        materials.push_back(lightE);
         
         
         materials.push_back(bloodRedD);
-        materials.push_back(redD);
+        //materials.push_back(redD);
         materials.push_back(blueD);
         materials.push_back(greenD);
+        materials.push_back(lightD);
 
 
-        for (int i = 0; i <= 15; i++)
-        {
-            int matNumber = random(0, materials.size());
+
+        //for (int i = 0; i <= 0; i++)
+        //{
+        //    int matNumber = random(0, materials.size());
+        //
+        //
+        //    auto object = std::make_unique<Sphere>(randomf(glm::vec3{ -15 }, glm::vec3{ 15 }), randomf(1, 5), materials[matNumber]);
+        //    //auto object = std::make_unique<Sphere>(random(glm::vec3{ -15 }, glm::vec3{ 15 }), randomf(1, 5), blue);
+        //    scene.AddObject(std::move(object));
+        //
+        //}
+
+        std::unique_ptr<SceneObject> object = std::make_unique<Triangle>(glm::vec3{ -5, 0, 0 }, glm::vec3{ 5, 0, 0 }, glm::vec3{ 0, 5, 0 }, bloodRed);
+        //std::unique_ptr<SceneObject> object = std::make_unique<Triangle>(glm::vec3{ 5, 6, 1 }, glm::vec3{ -5, 3, 1 }, glm::vec3{ 2, 5, 1 }, bloodRed);
+        //scene.AddObject(std::move(object));
+
+        Model teapot = Model(bloodRed);
+        teapot.Load("cube-2.obj");
+        std::unique_ptr<SceneObject> tea = std::make_unique<Model>(teapot.m_vertices, bloodRed);
+        scene.AddObject(std::move(tea));
+        //model->SetColor({ 0, 255, 0, 255 });
 
 
-            auto object = std::make_unique<Sphere>(randomf(glm::vec3{ -15 }, glm::vec3{ 15 }), randomf(1, 5), materials[matNumber]);
-            //auto object = std::make_unique<Sphere>(random(glm::vec3{ -15 }, glm::vec3{ 15 }), randomf(1, 5), blue);
-            scene.AddObject(std::move(object));
+        std::unique_ptr<SceneObject> lightSource = std::make_unique<Sphere>(randomf(glm::vec3{ -15 }, glm::vec3{ 15 }), randomf(1, 5), lightE);
+        scene.AddObject(std::move(lightSource));
 
-        }
 
         //std::shared_ptr<Material> material = std::make_shared<Lambertian>(color3_t{ 1, 0, 1 });
         //std::unique_ptr<Sphere> object = std::make_unique<Sphere>(glm::vec3{ 0, 0, 40 }, 2.0f, material);
@@ -161,7 +182,7 @@ int main(int argc, char* argv[])
         framebuffer.Clear(color_t{ 0, 200, 200, 255 });
 
         //scene.Render(framebuffer, camera);
-        scene.Render(framebuffer, camera, 20, 5);
+        scene.Render(framebuffer, camera, 100, 5);
 
 
 

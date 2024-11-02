@@ -1,6 +1,7 @@
 #include "Model.h"
 #include "Framebuffer.h"
 #include "Camera.h"
+#include "Triangle.h"
 
 #include <iostream>
 #include <fstream>
@@ -8,11 +9,7 @@
 #include <string>
 
 
-void Model::Draw(Framebuffer& framebuffer, const glm::mat4& model, const Camera& camera)
-{
-	//
-	
-}
+
 
 bool Model::Load(const std::string& filename)
 {
@@ -93,11 +90,31 @@ bool Model::Load(const std::string& filename)
 		return true;
 	}
 
-void Model::SetColor(color_t color)
-{
-	m_color = color;
 
+
+bool Model::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, float maxDistance)
+{
+	// check cast ray with mesh triangles 
+	for (size_t i = 0; i < m_vertices.size(); i += 3) //<skip by 3>
+	{
+		//Triangle triangle(<create triangle with the three vertex points>);
+		glm::vec3 point1{ m_vertices[i].x, m_vertices[i].y, m_vertices[i].z };
+		glm::vec3 point2{ m_vertices[i + 1].x, m_vertices[i + 1].y, m_vertices[i + 1].z };
+		glm::vec3 point3{ m_vertices[i + 2].x, m_vertices[i + 2].y, m_vertices[i + 2].z };
+		Triangle triangle(point1, point2, point3, SceneObject::GetMaterial().lock());
+		if (triangle.Hit(ray, raycastHit, minDistance, maxDistance))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
+
+
+
+
+
 
 
 	

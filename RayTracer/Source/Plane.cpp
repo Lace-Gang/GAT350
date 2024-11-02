@@ -28,3 +28,8 @@ bool Plane::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, f
     raycastHit.material = GetMaterial();
     return true;
 }
+
+//bool Load(const std::string& filename)
+//{
+//    return false;
+//}

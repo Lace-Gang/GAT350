@@ -70,7 +70,7 @@ inline bool Refract(const glm::vec3& i, const glm::vec3& n, float ri, glm::vec3&
 	float cosine = glm::dot(ni, n);
 
 	//tells us if we're refracting (positive if we are)
-	float descriminant = (1 - (ri * ri) + (1 - cosine * cosine));
+	float descriminant = (1 - (ri * ri) * (1 - cosine * cosine));
 
 	if (descriminant > 0)
 	{

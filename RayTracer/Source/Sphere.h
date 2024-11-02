@@ -20,6 +20,7 @@ public:
 	
 	// Inherited via SceneObject
 	bool Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, float maxDistance) override;
+	//bool Load(const std::string& filename) override;
 
 private:
 	glm::vec3 m_center{ 0 };
