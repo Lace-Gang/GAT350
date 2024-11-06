@@ -58,7 +58,7 @@ inline float Angle(const glm::vec3& v1, const glm::vec3& v2)
 inline glm::vec3 Reflect(const glm::vec3& i, const glm::vec3& n)
 {
 	
-	return (i - (n * Dot(n, i)) * 2.0f); 
+	return glm::reflect(i, n);// (i - (n * glm::dot(n, i)) * 2.0f);
 }
 
 //ri for refractive index

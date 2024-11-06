@@ -16,6 +16,9 @@ public:
 
 	ray_t GetRay(const glm::vec2& point) const;
 
+	void SetFOV(float fov);
+	
+
 private:
 	void CalculateViewPlain();
 
