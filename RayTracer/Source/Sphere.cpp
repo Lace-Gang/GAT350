@@ -44,7 +44,7 @@ bool Sphere::Raycast(const ray_t& ray, const glm::vec3& center, float radius, fl
 
     if (discriminant >= 0)
     {
-        //float t = (-b - sqrt(discriminant)) / (2 * a); <--redeclaring float t caused so much pain . . .
+        //float t = (-b - sqrt(discriminant)) / (2 * a); //<--redeclaring float t caused so much pain . . .
         t = (-b - sqrt(discriminant)) / (2 * a);
         if (t >= minDistance && t <= maxDistance)
         {
