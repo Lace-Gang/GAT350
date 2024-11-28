@@ -15,6 +15,8 @@
 #include "Random.h"
 //#include "Test.h"
 
+#include "Shader.h"
+
 #include <SDL.h>
 #include <iostream>
 #include <memory>
@@ -30,7 +32,8 @@ int main(int argc, char* argv[])
     Renderer r;
 
     Camera camera(800, 600); //change later to r.m_width and r.m_height
-    camera.SetView(glm::vec3{ 0, 0, -50 }, glm::vec3{ 0 });
+    //camera.SetView(glm::vec3{ 0, 0, -50 }, glm::vec3{ 0 });
+    camera.SetView(glm::vec3{ 0, 0, -10 }, glm::vec3{ 0 });
     camera.setProjection(90.0f, 800.0f / 600, 0.1f, 200.0f);
     Transform cameraTransform{ {0, 0, -20 } };
 
@@ -54,11 +57,12 @@ int main(int argc, char* argv[])
     std::shared_ptr<Model> modelS = std::make_shared<Model>();
     std::shared_ptr<Model> modelC = std::make_shared<Model>();
     std::shared_ptr<Model> modelTea = std::make_shared<Model>();
-    modelT->Load("torus.obj");
-    modelS->Load("sphere.obj");
-    modelC->Load("cube-2.obj");
-    modelTea->Load("teapot.obj");
-    modelT->SetColor({ 0, 255, 0, 255 });
+    modelT->Load("models/torus.obj");
+    modelS->Load("models/sphere.obj");
+    modelC->Load("models/cube-2.obj");
+    //modelTea->Load("models/teapot.obj");
+    //modelT->SetColor({ 0, 255, 0, 255 });
+    modelT->SetColor({ 0, 1, 1, 1 });
 
     //model->SetColor({ 0, 255, 50, 255 });
 
@@ -66,53 +70,60 @@ int main(int argc, char* argv[])
     
     std::vector<std::unique_ptr<Actor>> actors;
 
+    Transform transform{ glm::vec3{0}, glm::vec3{0}, glm::vec3{5} }; //{} and () are interchangable for calling a constructor
+    
+    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelS);
+    //actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255});
+    actors.push_back(std::move(actor));
+
+
     //models for torus
-    for (int i = 0; i < 10; i++)
-    {
-
-        Transform transform{ {randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
-    
-        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelT);
-        actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255});
-        actors.push_back(std::move(actor));
-
-    }
-
-    //models for sphere
-    for (int i = 0; i < 10; i++)
-    {
-
-        Transform transform{ {randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
-    
-        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelS);
-        actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
-        actors.push_back(std::move(actor));
-
-    }
-
-    //models for cube
-    for (int i = 0; i < 10; i++)
-    {
-
-        Transform transform{ {randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
-    
-        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelC);
-        actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
-        actors.push_back(std::move(actor));
-
-    }
-
-    //models for teapot
-    for (int i = 0; i < 10; i++)
-    {
-
-        Transform transform{ {randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
-    
-        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelTea);
-        actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
-        actors.push_back(std::move(actor));
-
-    }
+    //for (int i = 0; i < 10; i++)
+    //{
+    //
+    //    Transform transform{ {randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
+    //
+    //    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelT);
+    //    actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255});
+    //    actors.push_back(std::move(actor));
+    //
+    //}
+    //
+    ////models for sphere
+    //for (int i = 0; i < 10; i++)
+    //{
+    //
+    //    Transform transform{ {randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
+    //
+    //    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelS);
+    //    actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
+    //    actors.push_back(std::move(actor));
+    //
+    //}
+    //
+    ////models for cube
+    //for (int i = 0; i < 10; i++)
+    //{
+    //
+    //    Transform transform{ {randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
+    //
+    //    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelC);
+    //    actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
+    //    actors.push_back(std::move(actor));
+    //
+    //}
+    //
+    ////models for teapot
+    //for (int i = 0; i < 10; i++)
+    //{
+    //
+    //    Transform transform{ {randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f), randomf(-60.0f, 30.0f)}, glm::vec3{0, 0, 0}, glm::vec3{1}}; //{} and () are interchangable for calling a constructor
+    //
+    //    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelTea);
+    //    actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
+    //    actors.push_back(std::move(actor));
+    //
+    //}
 
 
 
@@ -200,8 +211,9 @@ int main(int argc, char* argv[])
         //}
 
 #pragma region images
-        Image image;
-        image.Load("scenic.jpg");
+        //Image image;
+        //image.Load("scenic.jpg");
+
         //
         //Image imageAlpha;
         //imageAlpha.Load("colors.png");
@@ -211,14 +223,27 @@ int main(int argc, char* argv[])
         //imagePerson.Load("chuuya.png");
         //
         SetBlendMode(BlendMode::Normal);
-        framebuffer.DrawImage(0, 200, image);
-        framebuffer.DrawImage(0, 100, image);
-        framebuffer.DrawImage(0, 0, image);
+        //framebuffer.DrawImage(0, 200, image);
+        //framebuffer.DrawImage(0, 100, image);
+        //framebuffer.DrawImage(0, 0, image);
         //framebuffer.DrawImage(100, 100, imagePerson);
         //SetBlendMode(BlendMode::Multiply);
         //framebuffer.DrawImage(mx - 300, my - 200, imageAlpha);
 #pragma endregion
 
+
+        //SHADER
+        VertexShader::uniforms.view = camera.getView();
+        VertexShader::uniforms.projection = camera.getProjection();
+        //VertexShader::uniforms.ambient = color3_t{ 0.5f, 1.0f, 0.5f }; //very nice green
+        //VertexShader::uniforms.ambient = color3_t{ 0.25f, 0.25f, 0.5f }; //very nice purple
+        VertexShader::uniforms.ambient = color3_t{ 0.1f };
+
+        VertexShader::uniforms.light.position = glm::vec3{ 10, 10, -10 };
+        VertexShader::uniforms.light.direction = glm::vec3{ 1, -1, 0 }; // light pointing down
+        VertexShader::uniforms.light.color = color3_t{ 1 }; // white light
+
+        Shader::framebuffer = &framebuffer;
         
 
 
@@ -254,6 +279,7 @@ int main(int argc, char* argv[])
         }
                 
         camera.SetView(cameraTransform.position, cameraTransform.position + cameraTransform.GetForward());
+        VertexShader::uniforms.view = camera.getView(); //I may or may not need this line? It did work without it for me but not for the rest of the class
 
 
         //transform.rotation.z += 90 * time.GetDeltaTime();
@@ -266,12 +292,19 @@ int main(int argc, char* argv[])
         //model->Draw(framebuffer, transform.GetMatrix(), camera);
         for (auto& actor : actors)
         {
-            actor->Draw(framebuffer, camera);
+            actor->GetTransform().rotation.y += time.GetDeltaTime() * 90;
+
+            //actor->Draw(framebuffer, camera);
+            actor->Draw();
 
         }
 
 
-
+        //for (auto& actor : actors)
+        //{
+        //    actor->GetTransform().rotation.y += time.GetDeltaTime() * 90;
+        //    actor->Draw();
+        //}
 #pragma region post_process
 
 
@@ -311,3 +344,18 @@ int main(int argc, char* argv[])
 
     return 0;
 }
+
+
+
+
+
+
+//dot product between surface normal and vector towards light is for diffuse lighting
+
+//cross product of two vectors or the triangle(or shape) gives us the normal 
+
+//dot product of reflective vector and vector to eye, if the two are close, there is specular light contribution
+
+//Blinn Phong is apparently really good with lighting stuff and may be worth looking up to learn more
+
+//FOR MONDAY: Need to have a sphere model rendered in the center

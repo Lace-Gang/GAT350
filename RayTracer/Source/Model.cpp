@@ -16,22 +16,22 @@ void Model::Update()
 {
 	for (size_t i = 0; i < m_local_vertices.size(); i++)
 	{
-		m_vertices[i] = m_transform * glm::vec4{ m_local_vertices[i], 1 };
+		m_vb[i] = m_transform * glm::vec4{ m_local_vertices[i], 1 };
 	}
 
 	// get center point of transformed vertices
 	m_center = glm::vec3{ 0 };
-	for (auto& vertex : m_vertices)
+	for (auto& vertex : m_vb)
 	{
 		m_center += vertex;
 	}
-	m_center /= (float)m_vertices.size();
+	m_center /= (float)m_vb.size();
 
 	//After that, compute the radius by getting the length of each vertex from the center.Store the highest radius.
 
 		// get radius of transformed vertices
 	m_radius = 0;
-	for (auto& vertex : m_vertices)
+	for (auto& vertex : m_vb)
 	{
 		//float radius = <use glm::length of the vector(vertex - m_center)>;
 		float radius = glm::length(vertex - m_center);
@@ -54,7 +54,7 @@ bool Model::Load(const std::string& filename)
 			return false;
 		}
 
-		vertices_t vertices;
+		vertexbuffer_t vertices;
 		std::string line;
 		while (std::getline(stream, line))
 		{
@@ -115,7 +115,7 @@ bool Model::Load(const std::string& filename)
 			}
 		}
 
-		m_vertices.resize(m_local_vertices.size());
+		m_vb.resize(m_local_vertices.size());
 
 		// TODO: close stream
 		stream.close();
@@ -133,18 +133,18 @@ bool Model::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, f
 
 
 	// check cast ray with mesh triangles 
-	for (size_t i = 0; i < m_vertices.size(); i += 3) //<skip by 3>
+	for (size_t i = 0; i < m_vb.size(); i += 3) //<skip by 3>
 	{
 		float t;
-		if (Triangle::Raycast(ray, m_vertices[i], m_vertices[i + 1], m_vertices[i + 2], minDistance, maxDistance, t))
+		if (Triangle::Raycast(ray, m_vb[i], m_vb[i + 1], m_vb[i + 2], minDistance, maxDistance, t))
 		{
 			// set raycast hit
 			raycastHit.distance = t;
 			raycastHit.point = ray.at(t);
 
 			// set edges of the triangle
-			glm::vec3 edge1 = m_vertices[i + 1] - m_vertices[i];
-			glm::vec3 edge2 = m_vertices[i + 2] - m_vertices[i];
+			glm::vec3 edge1 = m_vb[i + 1] - m_vb[i];
+			glm::vec3 edge2 = m_vb[i + 2] - m_vb[i];
 
 			raycastHit.normal = glm::cross(edge1, edge2);
 			raycastHit.material = GetMaterial();
