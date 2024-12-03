@@ -17,6 +17,7 @@ Framebuffer::Framebuffer(const Renderer& renderer, int width, int height)
 		std::cerr << "Error initializing SDL: " << SDL_GetError() << std::endl;
 	}
 	m_buffer.resize(m_width * m_height);
+	m_depth.resize(m_width * m_height);
 }
 
 Framebuffer::~Framebuffer()
@@ -25,7 +26,7 @@ Framebuffer::~Framebuffer()
 }
 
 void Framebuffer::Update(const Renderer& renderer)
-{	
+{
 	//creating the texture because it was being destroyed somewhere
 	m_texture = SDL_CreateTexture(renderer.m_renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, m_width, m_height);
 	SDL_UpdateTexture(m_texture, NULL, m_buffer.data(), m_pitch);
@@ -36,6 +37,7 @@ void Framebuffer::Update(const Renderer& renderer)
 void Framebuffer::Clear(const color_t& color)
 {
 	std::fill(m_buffer.begin(), m_buffer.end(), color);
+	std::fill(m_depth.begin(), m_depth.end(), std::numeric_limits<float>().max());
 }
 
 
@@ -82,7 +84,7 @@ void Framebuffer::DrawRect(int x, int y, int w, int h, const color_t& color)
 void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& color)
 {
 	//going to use slope intercept form: y= mx + b
-	
+
 	//slope
 	int dx = x2 - x1; //run
 	int dy = y2 - y1; //rise
@@ -100,7 +102,7 @@ void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& c
 		float m = dy / (float)dx;
 		//b = y-intercept
 		float b = y1 - (m * x1);
-		
+
 		if (std::abs(dx) > std::abs(dy))
 		{
 			for (int x = x1; x <= x2; x++)
@@ -112,11 +114,11 @@ void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& c
 		else { //rise > run
 			for (int y = y1; y <= y2; y++)
 			{
-				int x = (int)round((y - b) /m);
+				int x = (int)round((y - b) / m);
 				m_buffer[x + y * m_width] = color;
 			}
 		}
-		
+
 	}
 }
 
@@ -137,7 +139,7 @@ void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color)
 	}
 
 	//ensure left to right drawing
-	if(x1 > x2)
+	if (x1 > x2)
 	{
 		std::swap(x1, x2);
 		std::swap(y1, y2);
@@ -232,11 +234,11 @@ void Framebuffer::DrawLinearCurve(int x1, int y1, int x2, int y2, const color_t&
 		int sy1 = Lerp(y1, y2, t1);
 
 		float t2 = t1 + dt;
-		
+
 		int sx2 = Lerp(x1, x2, t2);
 		int sy2 = Lerp(y1, y2, t2);
 		t1 += dt;
-		
+
 		DrawLine(sx1, sy1, sx2, sy2, color);
 	}
 }
@@ -302,7 +304,7 @@ void Framebuffer::DrawImage(int x, int y, const Image& image)
 	//<look at DrawRect for example, use image width and height>
 	if (y + image.m_height < 0 || x + image.m_width < 0 || y >= m_height || x >= m_width) return;
 
-	
+
 	// iterate through image y
 	for (int iy = 0; iy < image.m_height; iy++)
 	{

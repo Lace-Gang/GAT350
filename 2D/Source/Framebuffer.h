@@ -15,6 +15,10 @@ public:
 	void Update(const class Renderer& renderer);
 	void Clear(const color_t& color);
 
+	std::vector<float>* GetDepth() { return &m_depth; }
+
+
+
 	void DrawPoint(int x, int y, const color_t& color);
 	void DrawPointClip(int x, int y, const color_t& color);
 	
@@ -40,6 +44,7 @@ public:
 
 	SDL_Texture* m_texture{ nullptr };
 	std::vector<color_t> m_buffer;
+	std::vector<float> m_depth;
 
 	//we have both of these for the purpose of speed
 };

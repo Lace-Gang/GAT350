@@ -57,9 +57,11 @@ int main(int argc, char* argv[])
     std::shared_ptr<Model> modelS = std::make_shared<Model>();
     std::shared_ptr<Model> modelC = std::make_shared<Model>();
     std::shared_ptr<Model> modelTea = std::make_shared<Model>();
+    std::shared_ptr<Model> modelO = std::make_shared<Model>();
     modelT->Load("models/torus.obj");
     modelS->Load("models/sphere.obj");
     modelC->Load("models/cube-2.obj");
+    modelO->Load("models/ogre.obj");
     //modelTea->Load("models/teapot.obj");
     //modelT->SetColor({ 0, 255, 0, 255 });
     modelT->SetColor({ 0, 1, 1, 1 });
@@ -72,7 +74,7 @@ int main(int argc, char* argv[])
 
     Transform transform{ glm::vec3{0}, glm::vec3{0}, glm::vec3{5} }; //{} and () are interchangable for calling a constructor
     
-    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelS);
+    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelO);
     //actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255});
     actors.push_back(std::move(actor));
 
