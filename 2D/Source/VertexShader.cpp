@@ -1,5 +1,6 @@
 #include "VertexShader.h"
 
+
 VertexShader::uniforms_t VertexShader::uniforms =
 {
 	//constructor for the identity matrix: glm::mat4(1)
@@ -47,6 +48,20 @@ void VertexShader::Process(const vertex_t& ivertex, vertex_output_t& overtex)
 
 
 	color3_t diffuse = uniforms.light.color * intensity;
-	overtex.color = uniforms.ambient + diffuse;
+
+	color3_t specular = { 0, 0, 0 }; // Initialize specular color to black (no contribution)
+
+	if (intensity > 0) {
+			glm::vec3 reflection = glm::reflect(-light_direction, ivertex.normal); // Compute reflection vector
+			glm::vec3 view_direction = glm::normalize(vposition); // Calculate view direction
+			intensity = glm::max(glm::dot(reflection, view_direction), 0.0f); // Compute intensity of reflection
+			intensity = glm::pow(intensity, uniforms.material.shininess); // Apply shininess factor
+			specular = (uniforms.material.specular * intensity); // Scale specular by intensity and material property
+			//specular = multiplyColor(uniforms.material.specular, intensity); // Scale specular by intensity and material property
+	}
+
+	overtex.color = ((uniforms.ambient + diffuse) * uniforms.material.albedo) + specular;
+	//overtex.color = ((uniforms.ambient + diffuse) * uniforms.material.albedo);
+	//overtex.color = uniforms.ambient + diffuse;
 }
 

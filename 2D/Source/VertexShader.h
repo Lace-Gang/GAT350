@@ -2,6 +2,7 @@
 //#include "Light.h"
 #include "Color.h"
 #include "Light.h"
+#include "Material.h"
 
 #include <array>
 #include <vector>
@@ -40,8 +41,9 @@ public:
 		glm::mat4 model;
 		glm::mat4 view;
 		glm::mat4 projection;
-		light_t light;
+		material_t material;
 		//lights
+		light_t light;
 		
 		color3_t ambient;
 	};

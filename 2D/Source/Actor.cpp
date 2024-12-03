@@ -7,6 +7,7 @@ void Actor::Draw()
 	//set vetex shader model matrix
 
 	VertexShader::uniforms.model = m_transform.GetMatrix();
+	VertexShader::uniforms.material = *m_material;
 
 	//m_model->SetColor(m_color);
 	//m_model->Draw(framebuffer, m_transform.GetMatrix(), camera);

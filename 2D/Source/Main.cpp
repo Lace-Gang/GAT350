@@ -68,15 +68,31 @@ int main(int argc, char* argv[])
 
     //model->SetColor({ 0, 255, 50, 255 });
 
-    Transform transformT{ {0, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{ 2 } }; //{} and () are interchangable for calling a constructor
+    Transform transformL{ {0, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{ 5 } }; //{} and () are interchangable for calling a constructor
+    Transform transform{ {-5, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{ 5 } }; 
+    Transform transformS{ {5, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{ 5 } }; 
     
     std::vector<std::unique_ptr<Actor>> actors;
 
-    Transform transform{ glm::vec3{0}, glm::vec3{0}, glm::vec3{5} }; //{} and () are interchangable for calling a constructor
+    Transform transformT{ glm::vec3{0}, glm::vec3{0}, glm::vec3{5} }; //{} and () are interchangable for calling a constructor
     
-    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelO);
+    // materials
+    std::shared_ptr<material_t> material = std::make_shared<material_t>();
+    material->albedo = color3_t{ 0, 0, 1 };
+    material->specular = color3_t{ 1 };
+    material->shininess = 32.0f;
+    
+    std::shared_ptr<material_t> materialTwo = std::make_shared<material_t>();
+    materialTwo->albedo = color3_t{ 0, 1, 1 };
+    materialTwo->specular = color3_t{ 1 };
+    materialTwo->shininess = 10.2f;
+
+
+    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, modelO, material);
+    std::unique_ptr<Actor> actorTwo = std::make_unique<Actor>(transformS, modelO, materialTwo);
     //actor->SetColor({ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255});
     actors.push_back(std::move(actor));
+    actors.push_back(std::move(actorTwo));
 
 
     //models for torus
@@ -239,10 +255,12 @@ int main(int argc, char* argv[])
         VertexShader::uniforms.projection = camera.getProjection();
         //VertexShader::uniforms.ambient = color3_t{ 0.5f, 1.0f, 0.5f }; //very nice green
         //VertexShader::uniforms.ambient = color3_t{ 0.25f, 0.25f, 0.5f }; //very nice purple
-        VertexShader::uniforms.ambient = color3_t{ 0.1f };
+        VertexShader::uniforms.ambient = color3_t{ 0.01f };
 
-        VertexShader::uniforms.light.position = glm::vec3{ 10, 10, -10 };
-        VertexShader::uniforms.light.direction = glm::vec3{ 1, -1, 0 }; // light pointing down
+        //VertexShader::uniforms.light.position = glm::vec3{ 10, 10, -10 };
+        VertexShader::uniforms.light.position = glm::vec3{ 0, 10, -5 };
+        //VertexShader::uniforms.light.direction = glm::vec3{ 1, -1, 0 }; // light pointing down
+        VertexShader::uniforms.light.direction = glm::vec3{ 0, -1, 1 }; // light pointing down
         VertexShader::uniforms.light.color = color3_t{ 1 }; // white light
 
         Shader::framebuffer = &framebuffer;
